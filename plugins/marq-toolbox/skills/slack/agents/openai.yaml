@@ -1,0 +1,4 @@
+interface:
+  display_name: "Slack"
+  short_description: "Resolve a Marq coworker by name and draft or send them a Slack message"
+  default_prompt: "Use $slack to DM a coworker a short summary of what we just did."

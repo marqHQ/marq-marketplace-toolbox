@@ -1,0 +1,4 @@
+interface:
+  display_name: "Google Workspace Setup"
+  short_description: "One-time setup of the gws CLI so your agent can work in your Google Drive, Docs, Sheets, and Slides"
+  default_prompt: "Use $gws-setup to connect my Google Workspace to this agent."

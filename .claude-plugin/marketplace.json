@@ -10,7 +10,7 @@
     {
       "name": "marq-toolbox",
       "source": "./plugins/marq-toolbox",
-      "description": "Everyday utilities for working with an AI agent at Marq: digest long output, confirm intent before acting, zoom out and reframe, and turn repeatable processes into skills."
+      "description": "Everyday utilities for working with an AI agent at Marq: digest long output, confirm intent, zoom out and reframe, message coworkers on Slack, codify workflows, and connect Google Workspace."
     }
   ]
 }

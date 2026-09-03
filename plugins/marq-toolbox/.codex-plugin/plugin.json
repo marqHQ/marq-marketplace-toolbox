@@ -1,7 +1,7 @@
 {
   "name": "marq-toolbox",
-  "version": "0.1.0",
-  "description": "Everyday utilities for working with an AI agent at Marq: digest long output, confirm intent before acting, zoom out and reframe, and turn repeatable processes into skills.",
+  "version": "0.2.0",
+  "description": "Everyday utilities for working with an AI agent at Marq: digest long output, confirm intent, zoom out and reframe, message coworkers on Slack, codify workflows, and connect Google Workspace.",
   "author": {
     "name": "Chandler Shipley"
   },
@@ -9,23 +9,24 @@
   "keywords": [
     "marq",
     "productivity",
+    "slack",
+    "google-workspace",
     "workflow",
     "summarize",
-    "confirm",
-    "reframe"
+    "confirm"
   ],
   "skills": "./skills/",
   "interface": {
     "displayName": "Marq Toolbox",
     "shortDescription": "Everyday AI skills for every Marq employee",
-    "longDescription": "A general-purpose collection of AI skills for working with an agent at Marq: consolidate long output into a digest, confirm intent before acting, zoom out and reframe a problem, and turn repeatable processes into skills.",
+    "longDescription": "A general-purpose collection of AI skills for working with an agent at Marq: consolidate long output into a digest, confirm intent before acting, zoom out and reframe a problem, message coworkers on Slack, turn repeatable processes into skills, and connect Google Workspace.",
     "developerName": "Chandler Shipley",
     "category": "Productivity",
     "capabilities": ["Interactive", "Read", "Write"],
     "defaultPrompt": [
       "Use $tldr to consolidate what you just told me into a short numbered digest.",
       "Use $confirm to restate what I'm trying to accomplish before doing anything.",
-      "Use $zoom-out to step back and reframe what we're doing before we go further."
+      "Use $slack to DM a coworker a summary of what we just did."
     ],
     "brandColor": "#36DEC3",
     "composerIcon": "./assets/icon.png",
