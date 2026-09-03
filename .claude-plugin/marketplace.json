@@ -1,0 +1,16 @@
+{
+  "name": "marq-toolbox-plugins",
+  "owner": {
+    "name": "Chandler Shipley"
+  },
+  "metadata": {
+    "description": "General-purpose productivity plugins for Marq employees."
+  },
+  "plugins": [
+    {
+      "name": "marq-toolbox",
+      "source": "./plugins/marq-toolbox",
+      "description": "Everyday utilities for working with an AI agent at Marq: digest long output, confirm intent before acting, zoom out and reframe, and turn repeatable processes into skills."
+    }
+  ]
+}

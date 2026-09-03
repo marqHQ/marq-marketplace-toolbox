@@ -1,0 +1,20 @@
+{
+  "name": "marq-toolbox-plugins",
+  "interface": {
+    "displayName": "Marq Toolbox Plugins"
+  },
+  "plugins": [
+    {
+      "name": "marq-toolbox",
+      "source": {
+        "source": "local",
+        "path": "./plugins/marq-toolbox"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

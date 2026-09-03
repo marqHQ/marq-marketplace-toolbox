@@ -1,0 +1,4 @@
+interface:
+  display_name: "TL;DR"
+  short_description: "Consolidate a wall of text into a numbered digest, then wait"
+  default_prompt: "Use $tldr to consolidate what you just told me into a short numbered digest I can drill into."

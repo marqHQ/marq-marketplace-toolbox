@@ -1,0 +1,4 @@
+interface:
+  display_name: "Zoom Out"
+  short_description: "Step back and reframe the problem before pushing further"
+  default_prompt: "Use $zoom-out to step back and reframe what we're doing before we go further."

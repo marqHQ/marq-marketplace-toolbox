@@ -1,0 +1,4 @@
+interface:
+  display_name: "Confirm"
+  short_description: "Readback-and-confirm checkpoint before executing"
+  default_prompt: "Use $confirm to restate what I'm trying to accomplish and wait for my confirmation before doing anything."
