@@ -126,3 +126,15 @@ never look for the file anywhere else.
 **Do:** use the newest file whose name starts with `client_secret` and ends
 in `.json`, verify the `project_id` as in step 3, copy it, then delete every
 `client_secret*.json` left in Downloads.
+
+## Drive connector fetch fails or no Drive tool is available
+
+**Means:** either the agent has no Google Drive connector/app authorized, the
+connector is signed in to a non-Marq Google account, or the file/folder ID
+changed.
+
+**Do:** first retry by search (`client_secret.json` inside `ai_plugin_assets`
+on the **Marq Company Wide** shared drive) rather than by ID. If the tool
+reports no access, the connector's Google account is not `@marq.com` —
+tell the user in one sentence and use the manual-download fallback in
+step 3. Do not ask them to reconnect Drive mid-setup; that is a separate task.

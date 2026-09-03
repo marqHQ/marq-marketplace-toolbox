@@ -2,7 +2,7 @@
 
 Public plugin marketplace for Marq employees. It contains one plugin (`marq-toolbox`) with six general-purpose skills, packaged for both Claude Code and Codex.
 
-The source is publicly readable for installation and inspection. It remains unlicensed; public availability does not grant permission to copy, modify, or redistribute it. The repo ships no employee data or credentials: the Slack skill builds a private roster cache on each user's machine, and the Google Workspace setup skill has the user download Marq's OAuth client file from a Marq-only Drive link.
+The source is publicly readable for installation and inspection. It remains unlicensed; public availability does not grant permission to copy, modify, or redistribute it. The repo ships no employee data or credentials: the Slack skill builds a private roster cache on each user's machine, and the Google Workspace setup skill fetches Marq's OAuth client file from the company shared drive through the agent's Google Drive connector.
 
 ## Skills
 
@@ -16,7 +16,7 @@ The source is publicly readable for installation and inspection. It remains unli
 ## Prerequisites
 
 - **slack** needs the Slack connector authorized in your agent.
-- **gws-setup** needs a browser signed in to your `@marq.com` Google account. It installs and authenticates the `gws` CLI itself.
+- **gws-setup** needs the Google Drive connector authorized in your agent (to fetch Marq's OAuth client file from the company shared drive) plus a browser for the one-time Google login. It installs and authenticates the `gws` CLI itself. If no Drive connector is available it falls back to asking you to download one file.
 - The other four skills are self-contained.
 
 ## Install

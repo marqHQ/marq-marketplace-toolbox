@@ -1,6 +1,6 @@
 ---
 name: gws-setup
-description: One-time, self-service setup of the Google Workspace CLI (`gws`) for a Marq employee, so their AI agent (Codex, Claude Code, etc.) can work in their Google Drive, Docs, Sheets, Slides, and Calendar as them. Installs gws, has the user download Marq's shared OAuth client file from a Marq-only Drive link, runs the browser login with the approved scopes, verifies it, then installs Google's official gws usage skills. Safe to invoke on an already-configured machine (it detects that and exits). Use when someone invokes /gws-setup, or says "set up gws", "install the Google Workspace CLI", "connect my Google Drive to Codex/Claude", or "connect Google Workspace". Do NOT use for day-to-day gws usage after setup — Google's `gws-*` skills cover that.
+description: One-time, self-service setup of the Google Workspace CLI (`gws`) for a Marq employee, so their AI agent (Codex, Claude Code, etc.) can work in their Google Drive, Docs, Sheets, Slides, and Calendar as them. Installs gws, fetches Marq's shared OAuth client file from the company Google Drive through the agent's Drive connector (manual download only as a fallback), runs the browser login with the approved scopes, verifies it, then installs Google's official gws usage skills. Safe to invoke on an already-configured machine (it detects that and exits). Use when someone invokes /gws-setup, or says "set up gws", "install the Google Workspace CLI", "connect my Google Drive to Codex/Claude", or "connect Google Workspace". Do NOT use for day-to-day gws usage after setup — Google's `gws-*` skills cover that.
 ---
 
 # gws setup for Marq (one-time)
@@ -9,9 +9,9 @@ You are setting up `gws` for a **non-technical colleague**. They will not know
 what a terminal, a hidden folder, or an OAuth scope is, and they should never
 need to. **You do every step.** The only things they do themselves:
 
-1. Download one file from a Google Drive link (step 3).
-2. Click **Allow** in the browser once (step 4).
-3. Possibly type their Mac password if Homebrew asks (rare).
+1. Click **Allow** in the browser once (step 4).
+2. Possibly type their Mac password if Homebrew asks (rare).
+3. Only if you have no Google Drive tool: download one file from a link (step 3 fallback).
 
 Talk to them in plain language. Never ask them to run a command, open a
 folder, or edit a file. If something needs a human, tell them exactly what to
@@ -24,11 +24,18 @@ Bundled with this skill:
 | `reference/troubleshooting.md` | Known failures and the fix for each. Read it when a step fails. |
 
 Marq's shared OAuth client file is **not** bundled (this plugin's source is
-public). It lives in Google Drive, readable only by `@marq.com` accounts:
+public). It lives in the company Google Drive, readable by every `@marq.com`
+account:
 
-```
-https://drive.google.com/file/d/1bxqqg1i2CLPCgmT7RpzwAzNaAKZdFFJx/view
-```
+| | |
+|---|---|
+| Location | Shared drives → **Marq Company Wide** → `ai_plugin_assets` → `client_secret.json` |
+| File ID | `1bxqqg1i2CLPCgmT7RpzwAzNaAKZdFFJx` |
+| Folder ID | `1lX5rlThTe2AfJnWC_L8r8sU_YgrGAYdv` |
+| Link | https://drive.google.com/file/d/1bxqqg1i2CLPCgmT7RpzwAzNaAKZdFFJx/view |
+
+You fetch it yourself with the Google Drive connector (step 3). The user only
+downloads it by hand if no Drive tool is available to you.
 
 ## Non-negotiables
 
@@ -154,22 +161,38 @@ troubleshooting → "gws: command not found after install".
      wait for a yes. Then rename the old file to `client_secret.json.bak` and
      continue.
    - **None** → continue.
-3. Ask the user to download the file. Say this, or close to it:
+3. **Fetch it yourself with the Google Drive connector** (default path, no
+   user interaction). Use whatever Drive tool your harness exposes:
+   - **Claude (claude.ai Google Drive connector):**
+     `mcp__claude_ai_Google_Drive__download_file_content` with
+     `fileId="1bxqqg1i2CLPCgmT7RpzwAzNaAKZdFFJx"`. It returns the file as a
+     base64 string in `content` — decode it to get the JSON text. (The
+     `read_file_content` tool does not support JSON files; use download.)
+     If the ID ever fails, `search_files` with
+     `title = 'client_secret.json' and parentId = '1lX5rlThTe2AfJnWC_L8r8sU_YgrGAYdv'`
+     and download the result.
+   - **ChatGPT / Codex (Google Drive app or connector):** open the file by its
+     link or search for `client_secret.json` in the `ai_plugin_assets` folder of
+     the **Marq Company Wide** shared drive, and read its contents. If the tool
+     returns base64, decode it; if it returns text, use it as-is.
+   - Write the JSON text to `<config dir>/client_secret.json`. Never echo the
+     contents into the conversation; the file holds a client secret.
+4. **Fallback — only if no Drive tool exists or every fetch attempt fails.**
+   Ask the user to download it. Say this, or close to it:
 
    > I need one small settings file from Marq's Google Drive. Please open this
    > link, make sure you're signed in with your **@marq.com** account, and click
    > the **download** icon at the top right. Then tell me when it's done.
    > https://drive.google.com/file/d/1bxqqg1i2CLPCgmT7RpzwAzNaAKZdFFJx/view
 
-   If Drive says they need access, they are signed in with the wrong Google
-   account — see troubleshooting.
-4. When they say it's downloaded, find the newest file matching
-   `client_secret*.json` in the Downloads dir (browsers may add ` (1)`), and
-   verify it contains `"project_id":"marq-gws-cli"` and a `client_id` starting
-   with `623463698939-`. If it doesn't, it's the wrong file — ask them to try
-   the link again.
-5. Copy it to `<config dir>/client_secret.json`, then **delete the copy in
-   Downloads** so the client file isn't lying around twice.
+   When they say it's downloaded, take the newest file matching
+   `client_secret*.json` in the Downloads dir (browsers may add ` (1)`), copy it
+   to `<config dir>/client_secret.json`, then **delete the copy in Downloads**
+   so the client file isn't lying around twice. If Drive says they need access,
+   they are signed in with the wrong Google account — see troubleshooting.
+5. Sanity check the installed file either way: it must contain
+   `"project_id":"marq-gws-cli"` and a `client_id` starting with `623463698939-`.
+   If it doesn't, it's the wrong file — retry the fetch.
 
 ## Step 4 — Log in (the one thing the user does)
 
