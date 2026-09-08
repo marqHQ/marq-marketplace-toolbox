@@ -242,6 +242,17 @@ gws drive files list --params '{"pageSize":3,"fields":"files(name)","q":"trashed
 
 Three file names back → authentication works end to end.
 
+If that call fails, **do not improvise and do not re-run step 4.** Match the
+error in `reference/troubleshooting.md` first. A failing step 5 never means the
+install or the client file was wrong — by this point both are verified — so
+redoing earlier steps only wastes the user's time.
+
+The most likely failure here is
+`Caller does not have required permission to use project marq-gws-cli`
+(or a bare `403`). That is an account permission on Marq's Cloud project, is
+fixed by Chandler and no one else, and is not something any step in this skill
+can resolve. Read the troubleshooting entry before saying anything to the user.
+
 ## Step 6 — Install Google's gws usage skills (default, do it)
 
 Google publishes official agent skills for using gws. Install the Marq-relevant

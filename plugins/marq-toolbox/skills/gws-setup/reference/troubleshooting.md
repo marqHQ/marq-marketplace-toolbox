@@ -80,6 +80,29 @@ usually because someone ran a bare `gws auth login` earlier or filtered to
 **Do:** run the exact step 4 command again. It replaces the token with the
 full approved set. Do not add scopes beyond the step 4 list.
 
+## "Caller does not have required permission to use project marq-gws-cli"
+
+Also appears as `PERMISSION_DENIED`, a bare `403`, or
+`Permission 'serviceusage.services.use' denied on resource ... marq-gws-cli`.
+
+**Means:** the install, the client file, and the sign-in are all fine — this
+account just isn't switched on to use Marq's shared Cloud project yet. It needs
+`roles/serviceusage.serviceUsageConsumer` on `marq-gws-cli`, which only a Marq
+Cloud admin can grant. Nothing on the user's machine causes this and nothing on
+their machine can fix it.
+
+**Do:** stop. Tell the user in one sentence that their account still needs to be
+switched on for this tool, and that Chandler Shipley does that once on Marq's
+side. Give Chandler the account address and the exact error text. When they say
+it's done, rerun step 5 only — the login from step 4 is still valid and must not
+be redone.
+
+**Never**, in response to this error: run `gws auth setup`, install or run
+`gcloud`, create or modify a Google Cloud project, swap in a different client
+file, or re-run `gws auth login` with different scopes. Repeating the login
+cannot help, and `gws auth setup` would replace Marq's shared client with a
+personal unverified project — the exact outcome this skill exists to prevent.
+
 ## Gmail calls fail with "Gmail API has not been used in project marq-gws-cli"
 
 **Means:** working as intended. Gmail is deliberately disabled on Marq's

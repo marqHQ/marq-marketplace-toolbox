@@ -1,6 +1,6 @@
 {
   "name": "marq-toolbox",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Everyday utilities for working with an AI agent at Marq: digest long output, confirm intent, zoom out and reframe, message coworkers on Slack, codify workflows, and connect Google Workspace.",
   "author": {
     "name": "Chandler Shipley"
