@@ -48,3 +48,4 @@ Registering the GitHub repository without a pinned ref lets Codex track marketpl
 .agents/plugins/marketplace.json   Codex marketplace manifest
 plugins/marq-toolbox/              The plugin (skills/, both plugin manifests, assets)
 ```
+quick test: here
