@@ -1,0 +1,52 @@
+name: Mirror to private mirror
+
+# Claude's company-wide plugin "Sync from GitHub" only lists private/internal
+# repos, and marqHQ is on GitHub Team (no "internal" visibility). This keeps a
+# private, byte-for-byte copy of this repo under ChandlerMARQ so it can be
+# registered there. The mirror is a read-only artifact: it is force-pushed on
+# every push to main and anything committed directly to it will be destroyed.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: mirror-to-private
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    # Guard: if this workflow file ever ends up running from the mirror itself,
+    # do nothing rather than push a repo into itself.
+    if: github.repository == 'marqHQ/marq-marketplace-toolbox'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure deploy key
+        run: |
+          mkdir -p ~/.ssh
+          install -m 600 /dev/null ~/.ssh/id_ed25519
+          echo "${{ secrets.MIRROR_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
+          ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts
+
+      - name: Clone source as a bare mirror
+        run: git clone --mirror "https://github.com/${{ github.repository }}.git" source.git
+
+      - name: Drop hidden refs GitHub refuses on push
+        working-directory: source.git
+        run: |
+          git for-each-ref --format='%(refname)' refs/pull \
+            | xargs -r -n1 git update-ref -d
+
+      - name: Force-push every ref to the mirror
+        working-directory: source.git
+        run: git push --mirror git@github.com:ChandlerMARQ/MIRROR-marq-marketplace-toolbox.git
+
+      - name: Verify mirror matches source
+        working-directory: source.git
+        run: |
+          src=$(git rev-parse main)
+          dst=$(git ls-remote git@github.com:ChandlerMARQ/MIRROR-marq-marketplace-toolbox.git refs/heads/main | cut -f1)
+          echo "source main: $src"
+          echo "mirror main: $dst"
+          test "$src" = "$dst"
