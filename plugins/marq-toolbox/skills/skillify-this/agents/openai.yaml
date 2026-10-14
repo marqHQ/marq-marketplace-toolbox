@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skillify This"
+  short_description: "Turn a process, planned or just done, into a skill"
+  default_prompt: "Use $skillify-this to turn what we just did into a reusable skill."

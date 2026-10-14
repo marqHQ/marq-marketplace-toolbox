@@ -1,4 +1,0 @@
-interface:
-  display_name: "Workflow Creator"
-  short_description: "Turn a multi-step process into a master skill"
-  default_prompt: "Use $workflow-creator to turn my repeatable process into a master SKILL.md, one validated step at a time."
