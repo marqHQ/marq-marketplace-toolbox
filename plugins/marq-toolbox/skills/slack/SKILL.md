@@ -1,6 +1,6 @@
 ---
 name: slack
-description: Resolve a Marq coworker's name to their Slack user ID (from a per-user cached directory, falling back to live search), then draft and send Slack messages/DMs. Use whenever the task is to Slack, DM, message, or ping a specific person at Marq by name — e.g. "slack Yue", "DM Aria the summary", "message Brad about the deploy". Also use to look up someone's Slack ID/email, or to build or refresh the cached Slack directory.
+description: Resolve a Marq coworker's name to their Slack user ID (from a per-user cached directory, falling back to live search), then draft and send Slack messages/DMs. Use whenever the task is to Slack, DM, message, or ping a specific person at Marq by name — e.g. "slack Yue", "DM Aria the summary", "message Brad about the deploy". Learns and persists how the operator writes from their edits to drafts. Also use to look up someone's Slack ID/email, or to build or refresh the cached Slack directory.
 ---
 
 # Slack directory + send
@@ -17,12 +17,23 @@ the refresh procedure below.
 
 ## Where the cache lives
 
-| OS | Cache file |
+| OS | Directory |
 |---|---|
-| macOS / Linux | `~/.config/marq-slack/directory.csv` |
-| Windows | `%USERPROFILE%\.config\marq-slack\directory.csv` |
+| macOS / Linux | `~/.config/marq-slack/` |
+| Windows | `%USERPROFILE%\.config\marq-slack\` |
 
-Create the directory and file on first use. Format:
+Two files live there, both created on first use and both private to the operator:
+
+- `directory.csv` — the roster cache (format below).
+- `voice.md` — how the operator writes, learned from their edits (see **Drafting
+  in the operator's voice**).
+
+Nothing in a plugin install or update touches this directory, so both files
+survive upgrades. Edit them with your file tools, not `sed -i` or similar
+one-liners — those flags differ between GNU and BSD, so a command that works on
+Linux silently fails on macOS.
+
+Roster format:
 
 ```
 # refreshed: <YYYY-MM-DD> · <N> accounts · mode: lazy|full
@@ -135,21 +146,69 @@ Return the `message_link` from the response so the operator can jump to it.
 ## Drafting in the operator's voice
 
 **When the operator supplies the text, send their words** — mechanical pass only.
-These rules are for drafting from scratch.
+Everything below is for drafting from scratch.
 
-- **Look before you write.** Pull a handful of the operator's recent sent messages
-  (`slack_search_public_and_private` with `from:<@THEIR_ID>`) and match what you see:
-  greeting or no greeting, bullets or prose, emoji or none, how they open and close.
-- **Default to no runway.** Start with the mention and the substance on the same
-  line. End on the operative point. Skip "thanks in advance" and "let me know if
-  you have questions" unless the operator's own messages use them.
-- **State the shape up front** for anything with more than two parts: "2 questions:",
-  then bullets.
-- **Keep technical specifics exact** — full table names, dates, counts — in backticks.
+Each operator has a private `voice.md` beside the roster cache (see **Where the
+cache lives**). It has two sections: `## Rules` (how this person writes) and
+`## Edit log` (the evidence behind each rule). The skill ships no voice data; the
+file is seeded once and then grown from the operator's own edits.
+
+### First use — seed the rules from what they've already sent
+
+If `voice.md` doesn't exist:
+
+1. Pull about 20 of the operator's recent sent messages:
+   `slack_search_public_and_private query="from:<@THEIR_ID>"`, newest first.
+2. Derive concrete, checkable rules. Look at openers (greeting or none; mention
+   first?), shape (bullets or prose; counts stated up front; labels like
+   `Update:`), closers (sign-off or none), register (emoji, contractions, em
+   dashes, "I" vs "we"), and length.
+3. Write the file: `# Voice`, then `## Rules` with each rule tagged `(seeded)`,
+   then `## Edit log` with one entry recording the scan — date, message count,
+   date range of the sample.
+4. Tell the operator in one line that you seeded their voice profile and where
+   it lives.
+
+The scan is weak evidence: it shows what they write, not what they reject. Treat
+seeded rules as provisional until an edit confirms or overturns them.
+
+### Every draft — read the rules, then fill gaps with these defaults
+
+Read `## Rules` before drafting. Where the file is silent:
+
+- **No runway.** Mention and substance on the same line; end on the operative
+  point. Skip "thanks in advance" and "let me know if you have questions".
+- **State the shape up front** for anything with more than two parts:
+  "2 questions:", then bullets.
+- **Keep technical specifics exact** — full table names, dates, counts — in
+  backticks.
 - **Flag uncertainty plainly** rather than hedging around it.
-- **Learn from edits.** When the operator changes your draft before sending, treat
-  phrasing, structure, and tone changes as standing preferences for the rest of the
-  session. Content corrections (a wrong number, a different channel) are not voice.
+- **Never offer synchronous time** ("happy to hop on a call") unless their rules
+  say they do.
+
+### Every send — log what the operator changed (standing job, do it unprompted)
+
+Each edit the operator makes to a draft is the strongest signal available, and it
+expires if not captured. After **every** send where they changed the text:
+
+1. **Diff** the sent text against the draft.
+2. **Classify** each change: cut / added / reworded / reordered.
+3. **Discard content corrections** — a wrong number, a different channel, a fact.
+   Keep only changes to phrasing, structure, tone, and framing.
+4. **Append** to `## Edit log`: date, context (DM or channel; what kind of
+   message), then a table of draft span → sent span → one-line reading. Append
+   only — never rewrite or trim earlier entries.
+5. **Promote on repeat.** The first occurrence is an observation. The second
+   occurrence of the same change becomes a rule: add it to `## Rules`, cite the
+   log dates, and mark the log entries `→ PROMOTED`. A seeded rule contradicted
+   by an edit is overturned, not argued with.
+6. **Unedited sends are signal too.** One line in the log — date, context, "sent
+   unedited" — confirms the rules that produced the draft.
+7. **Tell the operator in one line** what you logged. No editorializing, no
+   thanking them for the feedback.
+
+If the log goes quiet for months, re-run the corpus scan and reconcile against the
+rules — habits drift.
 
 ## Build or refresh the full directory
 

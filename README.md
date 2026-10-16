@@ -9,7 +9,7 @@ The source is publicly readable for installation and inspection. It remains unli
 - **tldr** — Cognitive-load circuit breaker: rewrites the last stretch of output as a 3–7 item numbered digest you can drill into one item at a time, then pauses until you choose.
 - **confirm** — Restates the requested outcome and obtains confirmation before acting.
 - **zoom-out** — Steps back from the immediate task to reframe the problem, surface the bigger goal, and check whether the current path still serves it.
-- **slack** — Resolves a Marq coworker's name to their Slack user ID from a per-user cached directory (falling back to live search), then drafts and sends Slack messages or DMs.
+- **slack** — Resolves a Marq coworker's name to their Slack user ID from a per-user cached directory (falling back to live search), then drafts and sends Slack messages or DMs. Learns how you write from your edits and keeps that profile on your machine.
 - **skillify-this** — Turns a process into a reusable skill: either one you describe from scratch (built and validated step by step) or one you just finished with the agent (extracted from the conversation, then generalized).
 - **gws-setup** — One-time setup of the Google Workspace CLI (`gws`) so your agent can work in your Drive, Docs, Sheets, Slides, and Calendar as you.
 
